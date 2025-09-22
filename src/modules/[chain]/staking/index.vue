@@ -158,58 +158,43 @@ function isFeatured(
   who?: { website?: string; moniker: string }
 ) {
   if (!endpoints || !who) return false;
-
-  return endpoints.some((endpoint) => {
-    const endpointLower = endpoint.toLowerCase().trim();
-    const monikerLower = (who.moniker || '').toLowerCase().trim();
-    const website = (who.website || '').toLowerCase().trim();
-
-    const checks = {
-      exactMatch: monikerLower === endpointLower,
-      monikerContains: monikerLower.includes(endpointLower),
-      endpointContains: endpointLower.includes(monikerLower),
-      websiteContains: website.includes(endpointLower),
-      websiteDomainMatch: website.includes(endpointLower + '.'),
-    };
-
-    return Object.values(checks).some(Boolean);
-  });
+  return (
+    endpoints.findIndex(
+      (x) =>
+        (who.website &&
+          who.website
+            ?.substring(0, who.website?.lastIndexOf('.'))
+            .endsWith(x)) ||
+        who?.moniker?.toLowerCase().search(x.toLowerCase()) > -1
+    ) > -1
+  );
 }
+
 
 // ============ FEATURED LIST (selalu ada di atas) ============
 const featuredList = computed(() => {
-  const endpointProviders = (chainStore.current?.endpoints?.rest || [])
-    .map((x: any) => x.provider)
-    .filter(Boolean) as string[];
+  // Ambil daftar provider dari endpoint REST
+  const endpointProviders =
+    (chainStore.current?.endpoints?.rest || [])
+      .map((x: any) => x?.provider)
+      .filter(Boolean) as string[];
 
-  // satukan sumber "kata kunci"
-  const monikerKeywords = Array.from(
-    new Set([...endpointProviders, ...FEATURED_MONIKERS])
-  ).filter(Boolean) as string[];
+  // Tambah kata kunci khusus
+  endpointProviders.push('crxanode');
 
-  // Filter by moniker/website
-  const byMonikerOrWebsite = staking.validators.filter((v) =>
-    isFeatured(monikerKeywords, v.description)
-  );
-
-  // Filter by operator address (whitelist hard)
-  const byAddress = staking.validators.filter((v) =>
-    FEATURED_ADDRESSES.includes(v.operator_address)
-  );
-
-  // Gabungkan & dedup by operator address
-  const merged = [...byMonikerOrWebsite, ...byAddress].filter(
-    (v, i, arr) =>
-      arr.findIndex((t) => t.operator_address === v.operator_address) === i
+  // Filter validator berdasarkan moniker/website Saja
+  const filtered = staking.validators.filter((v) =>
+    isFeatured(endpointProviders, v.description)
   );
 
   // Map ke bentuk tampil
-  return merged.map((x) => ({
+  return filtered.map((x) => ({
     v: x,
     rank: 'primary',
     logo: logo(x.description.identity),
   }));
 });
+
 // ============================================================
 
 const list = computed(() => {
