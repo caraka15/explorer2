@@ -1,0 +1,69 @@
+{
+  "chain_name": "agoric",
+  "api": [
+    {
+      "address": "https://agoric-api.polkachu.com",
+      "provider": "polkachu.com"
+    },
+    {
+      "address": "https://api-agoric.nodes.guru",
+      "provider": "nodes.guru"
+    },
+    {
+      "address": "https://agoric.stakesystems.io",
+      "provider": "stakesystems.io"
+    },
+    {
+      "address": "https://agoric-lcd.stakely.io",
+      "provider": "stakely.io"
+    },
+    {
+      "address": "https://api.agoric.nodestake.top",
+      "provider": "nodestake.top"
+    },
+    {
+      "address": "https://agoric.api.kjnodes.com",
+      "provider": "kjnodes.com"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://main.rpc.agoric.net:443",
+      "provider": "agoric.net:443"
+    },
+    {
+      "address": "https://main.rpc.agoric.net:443",
+      "provider": "agoric.net:443"
+    },
+    {
+      "address": "https://rpc.agoric.nodestake.top",
+      "provider": "nodestake.top"
+    },
+    {
+      "address": "https://agoric.rpc.kjnodes.com:443",
+      "provider": "kjnodes.com:443"
+    }
+  ],
+  "snapshot_provider": "",
+  "sdk_version": "0.45.4",
+  "coin_type": "564",
+  "min_tx_fee": "8000",
+  "assets": [
+    {
+      "base": "ubld",
+      "symbol": "BLD",
+      "exponent": "6",
+      "coingecko_id": "agoric",
+      "logo": "/logos/agoric-bld.svg"
+    },
+    {
+      "base": "uist",
+      "symbol": "IST",
+      "exponent": "6",
+      "coingecko_id": "",
+      "logo": ""
+    }
+  ],
+  "addr_prefix": "agoric",
+  "logo": "/logos/agoric.png"
+}

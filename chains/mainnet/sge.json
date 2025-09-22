@@ -1,0 +1,79 @@
+{
+  "chain_name": "sge",
+  "alias": "sge",
+  "api": [
+    {
+      "address": "https://rest.cosmos.directory/sge",
+      "provider": "cosmos.directory"
+    },
+    {
+      "address": "https://sge-api.lavenderfive.com",
+      "provider": "lavenderfive.com"
+    },
+    {
+      "address": "https://sge-api.ramuchi.tech",
+      "provider": "ramuchi.tech"
+    },
+    {
+      "address": "https://api-sge.nodeist.net",
+      "provider": "nodeist.net"
+    },
+    {
+      "address": "https://sge-api.polkachu.com",
+      "provider": "polkachu.com"
+    },
+    {
+      "address": "https://api.sge.nodestake.top",
+      "provider": "nodestake.top"
+    },
+    {
+      "address": "https://sge-api.sr20de.xyz",
+      "provider": "sr20de.xyz"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://rpc.cosmos.directory/sge",
+      "provider": "cosmos.directory"
+    },
+    {
+      "address": "https://sge-rpc.lavenderfive.com",
+      "provider": "lavenderfive.com"
+    },
+    {
+      "address": "https://sge-rpc.ramuchi.tech",
+      "provider": "ramuchi.tech"
+    },
+    {
+      "address": "https://rpc-sge.nodeist.net",
+      "provider": "nodeist.net"
+    },
+    {
+      "address": "https://sge-rpc.polkachu.com",
+      "provider": "polkachu.com"
+    },
+    {
+      "address": "https://rpc.sge.nodestake.top",
+      "provider": "nodestake.top"
+    },
+    {
+      "address": "https://sge-rpc.sr20de.xyz",
+      "provider": "sr20de.xyz"
+    }
+  ],
+  "snapshot_provider": "",
+  "addr_prefix": "sge",
+  "coin_type": "494",
+  "min_tx_fee": "8000",
+  "assets": [
+    {
+      "base": "usge",
+      "symbol": "SGE",
+      "exponent": "6",
+      "coingecko_id": "sge",
+      "logo": "/logos/sge.png"
+    }
+  ],
+  "logo": "/logos/sge.png",
+  "sdk_version": "0.45.8"
+}

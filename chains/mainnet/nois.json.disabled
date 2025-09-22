@@ -1,0 +1,35 @@
+{
+  "chain_name": "nois",
+  "api": [
+    {
+      "address": "https://nois-api.polkachu.com",
+      "provider": "polkachu.com"
+    },
+    {
+      "address": "https://api.nois.nodestake.top",
+      "provider": "nodestake.top"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://nois-rpc.polkachu.com",
+      "provider": "polkachu.com"
+    },
+    {
+      "address": "https://rpc.nois.nodestake.top",
+      "provider": "nodestake.top"
+    }
+  ],
+  "sdk_version": "0.45.14",
+  "addr_prefix": "nois",
+  "min_tx_fee": "5000",
+  "logo": "/logos/nois.png",
+  "assets": [
+    {
+      "symbol": "NOIS",
+      "base": "unois",
+      "exponent": 6,
+      "logo": "/logos/nois.png"
+    }
+  ]
+}

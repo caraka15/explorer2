@@ -1,0 +1,34 @@
+{
+  "chain_name": "althea",
+  "api": [
+    {
+      "address": "https://althea.api.m.stavr.tech",
+      "provider": "stavr.tech"
+    },
+    {
+      "address": "https://nodes.chandrastation.com/api/althea",
+      "provider": "chandrastation.com"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://althea.rpc.m.stavr.tech",
+      "provider": "stavr.tech"
+    }
+  ],
+  "snapshot_provider": "https://www.polkachu.com/tendermint_snapshots/althea",
+  "sdk_version": "v0.45.16",
+  "coin_type": "118",
+  "min_tx_fee": "",
+  "addr_prefix": "althea",
+  "logo": "https://raw.githubusercontent.com/cosmostation/chainlist/master/chain/althea/resource/chain_althea.png",
+  "assets": [
+    {
+      "base": "aalthea",
+      "symbol": "ALTHEA",
+      "exponent": "18",
+      "coingecko_id": "althea",
+      "logo": "https://raw.githubusercontent.com/cosmostation/chainlist/master/chain/althea/asset/altg.png"
+    }
+  ]
+}

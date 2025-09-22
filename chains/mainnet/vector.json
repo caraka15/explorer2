@@ -1,0 +1,36 @@
+{
+  "chain_name": "Vector",
+  "api": [
+    {
+      "address": "https://archive-api-1.playonvector.com",
+      "provider": "playonvector.com"
+    },
+    {
+      "address": "https://archive-api-vector-1.seraphim.zone",
+      "provider": "seraphim.zone"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://archive-rpc-1.playonvector.com",
+      "provider": "playonvector.com"
+    },
+    {
+      "address": "https://archive-rpc-vector-1.seraphim.zone",
+      "provider": "seraphim.zone"
+    }
+  ],
+  "snapshot_provider": "",
+  "coin_type": 118,
+  "sdk_version": "0.50.11",
+  "addr_prefix": "vector",
+  "logo": "/logos/vector-logo.png",
+  "assets": [
+    {
+      "base": "uvctr",
+      "symbol": "VECTR",
+      "exponent": 6,
+      "logo": "/logos/vector-logo.png"
+    }
+  ]
+}

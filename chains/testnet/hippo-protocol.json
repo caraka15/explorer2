@@ -1,0 +1,36 @@
+{
+  "chain_name": "hippo-protocol",
+  "api": [
+    {
+      "address": "https://api.testnet.hippo-protocol.com",
+      "provider": "hippo-protocol.com"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://rpc.testnet.hippo-protocol.com",
+      "provider": "hippo-protocol.com"
+    }
+  ],
+  "snapshot_provider": "",
+  "sdk_version": "0.50.13",
+  "coin_type": "0",
+  "min_tx_fee": "100000000000000000",
+  "addr_prefix": "hippo",
+  "logo": "/logos/hippo-protocol.png",
+  "assets": [
+    {
+      "base": "ahp",
+      "symbol": "HP",
+      "exponent": "18",
+      "coingecko_id": "",
+      "logo": "/logos/hippo-protocol.png"
+    }
+  ],
+  "faucet": {
+    "amount": "50000000000000000000ahp",
+    "ip_limit": "3",
+    "address_limit": "1",
+    "fees": "100000000000000000ahp"
+  }
+}

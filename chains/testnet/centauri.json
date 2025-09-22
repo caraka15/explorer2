@@ -1,0 +1,31 @@
+{
+  "chain_name": "picasso",
+  "api": [
+    {
+      "address": "https://composable.api.t4.stavr.tech",
+      "provider": "stavr.tech"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://composable.rpc.t4.stavr.tech",
+      "provider": "stavr.tech"
+    }
+  ],
+  "coingecko": "",
+  "snapshot_provider": "",
+  "sdk_version": "0.47.3",
+  "coin_type": "118",
+  "min_tx_fee": "500",
+  "addr_prefix": "pica",
+  "logo": "/logos/picasso.png",
+  "assets": [
+    {
+      "base": "ppica",
+      "symbol": "PICA",
+      "exponent": "12",
+      "coingecko_id": "",
+      "logo": "/logos/picasso.png"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "chain_name": "jackal",
+  "coingecko": "jackal-protocol",
+  "api": [
+    {
+      "address": "https://api.jackalprotocol.com",
+      "provider": "jackalprotocol.com"
+    },
+    {
+      "address": "https://jackal-api.polkachu.com",
+      "provider": "polkachu.com"
+    },
+    {
+      "address": "https://api.jackal.nodestake.top",
+      "provider": "nodestake.top"
+    }
+  ],
+  "rpc": [
+    {
+      "address": "https://rpc.jackalprotocol.com",
+      "provider": "jackalprotocol.com"
+    },
+    {
+      "address": "https://jackal-rpc.polkachu.com",
+      "provider": "polkachu.com"
+    },
+    {
+      "address": "https://rpc.jackal.nodestake.top",
+      "provider": "nodestake.top"
+    }
+  ],
+  "snapshot_provider": "",
+  "coin_type": "118",
+  "sdk_version": "0.45.11",
+  "addr_prefix": "jkl",
+  "logo": "/logos/jackal.png",
+  "assets": [
+    {
+      "base": "ujkl",
+      "symbol": "JKL",
+      "exponent": "6",
+      "coingecko_id": "jackal-protocol",
+      "logo": "/logos/jackal.png"
+    }
+  ]
+}
