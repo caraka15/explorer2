@@ -29,10 +29,10 @@
             "symbol": "PAXI",
             "exponent": "6",
             "coingecko_id": "",
-            "logo": "https://paxinet.io/resources/img/icon_transparent.png"
+            "logo": "/logos/paxi.png"
         }
     ],
     "addr_prefix": "paxi",
     "theme_color": "#8C7EFF",
-    "logo": "https://paxinet.io/resources/img/icon_transparent.png"
+    "logo": "/logos/paxi.png"
 }
