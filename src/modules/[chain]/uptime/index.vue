@@ -171,11 +171,12 @@ function fillblock(b: Block, direction: string = 'end') {
       };
     }
     if (direction === 'end') {
-      block.push(color);
+      block.unshift(color);
+      if (block.length > 50) block.pop(); // Remove the last element
     } else {
       block.unshift(color);
+      if (block.length > 50) block.pop(); // Keep consistent for initial fill
     }
-    if (block.length > 50) block.shift();
     blockColors.value[v.base64] = block;
   });
 }

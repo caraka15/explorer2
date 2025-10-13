@@ -5,8 +5,8 @@ const props = defineProps({
   blocks: { type: Array as PropType<{ height: string; color: string }[]> },
 });
 
-const firstRow = computed(() => props.blocks?.slice(0, 50));
-const secondRow = computed(() => props.blocks?.slice(50, 100));
+const firstRow = computed(() => props.blocks?.slice(0, 25));
+const secondRow = computed(() => props.blocks?.slice(25, 50));
 
 </script>
 <template>
