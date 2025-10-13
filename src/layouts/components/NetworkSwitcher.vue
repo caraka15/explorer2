@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useDashboard } from '@/stores/useDashboard';
 import { NetworkType } from '@/types/chaindata';
-import { Icon } from '@iconify/vue';
 import { computed } from 'vue';
 
 const dashboard = useDashboard();
@@ -18,13 +17,17 @@ function toggle() {
 </script>
 
 <template>
-  <button
-    class="btn btn-sm btn-primary m-1 lowercase !inline-flex text-xs md:!text-sm group"
+  <div
+    class="relative flex items-center w-36 h-8 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer transition-colors duration-300 ease-in-out"
     @click="toggle"
   >
-    <Icon icon="mdi:swap-horizontal" />
-    <span class="ml-1 w-0 group-hover:w-auto transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap md:w-auto">
-      {{ isTestnet ? 'Mainnet' : 'Testnet' }}
-    </span>
-  </button>
+    <div
+      class="absolute left-0 w-1/2 h-full bg-primary rounded-full shadow-md transform transition-transform duration-300 ease-in-out"
+      :class="{ 'translate-x-full': isTestnet }"
+    ></div>
+    <div class="relative z-10 w-full flex justify-around text-xs font-semibold">
+      <span :class="{ 'text-white': !isTestnet, 'text-gray-500': isTestnet }">Mainnet</span>
+      <span :class="{ 'text-white': isTestnet, 'text-gray-500': !isTestnet }">Testnet</span>
+    </div>
+  </div>
 </template>
