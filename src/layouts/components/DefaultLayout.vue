@@ -15,6 +15,7 @@ import { useBaseStore, useBlockchain } from '@/stores';
 
 import NavBarI18n from './NavBarI18n.vue';
 import NavBarWallet from './NavBarWallet.vue';
+import NetworkSwitcher from './NetworkSwitcher.vue';
 import type {
   NavGroup,
   NavLink,
@@ -293,6 +294,7 @@ const show_ad = computed(() => {
         <NavBarI18n class="hidden md:!inline-block" />
         <NavbarThemeSwitcher class="!inline-block" />
         <NavbarSearch class="!inline-block" />
+        <NetworkSwitcher />
         <NavBarWallet />
       </div>
 

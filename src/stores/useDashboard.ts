@@ -253,5 +253,10 @@ export const useDashboard = defineStore('dashboard', {
       this.source = newSource;
       this.initial();
     },
+    toggleNetworkType() {
+      this.networkType = this.networkType === NetworkType.Mainnet ? NetworkType.Testnet : NetworkType.Mainnet;
+      this.chains = {};
+      this.loadingFromLocal();
+    },
   },
 });
