@@ -224,28 +224,20 @@ function changeTab(v: string) {
 
       <!-- grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-4 mt-4 -->
       <div :class="tab === '2' ? '' : 'hidden'">
-        <div class="flex flex-row flex-wrap gap-x-4 mt-4 justify-center">
-          <div v-for="(unit, i) in grid" :key="i">
-            <div class="flex justify-between py-0 w-[248px]">
-              <label class="truncate text-sm">
-                <span class="ml-1 text-black dark:text-white"
-                  >{{ i + 1 }}.{{ unit.moniker }}</span
-                >
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
+          <div v-for="(unit, i) in grid" :key="i" class="bg-base-100 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+            <div class="flex justify-between items-center py-0">
+              <label class="truncate text-sm font-semibold text-black dark:text-white">
+                {{ i + 1 }}.{{ unit.moniker }}
               </label>
               <div
-                v-if="Number(unit?.missed_blocks_counter || 0) > 10"
-                class="badge badge-sm bg-transparent border-0 text-red-500 font-bold"
-              >
-                {{ unit?.missed_blocks_counter }}
-              </div>
-              <div
-                v-else
-                class="badge badge-sm bg-transparent text-green-600 border-0 font-bold"
+                class="badge badge-sm bg-transparent border-0 font-bold"
+                :class="Number(unit?.missed_blocks_counter || 0) > 10 ? 'text-red-500' : 'text-green-600'"
               >
                 {{ unit?.missed_blocks_counter }}
               </div>
             </div>
-            <UptimeBar :blocks="unit.blocks" />
+            <UptimeBar :blocks="unit.blocks" class="mt-2" />
           </div>
         </div>
         <div class="mt-5 text-xs flex justify-center gap-2">
