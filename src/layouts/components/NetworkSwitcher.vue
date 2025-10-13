@@ -2,7 +2,7 @@
 import { useDashboard } from '@/stores/useDashboard';
 import { NetworkType } from '@/types/chaindata';
 import { Icon } from '@iconify/vue';
-import { computed }s from 'vue';
+import { computed } from 'vue';
 
 const dashboard = useDashboard();
 
