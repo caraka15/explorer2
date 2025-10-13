@@ -2,6 +2,11 @@
   background: var(--initial-loader-bg, #fff);
 }
 
+.loading-logo img {
+  width: 150px;
+  height: 150px;
+}
+
 .loading-logo {
   position: absolute;
   inset-block-start: 40%;
