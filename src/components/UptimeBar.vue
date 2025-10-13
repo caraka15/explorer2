@@ -11,14 +11,14 @@ const secondRow = computed(() => props.blocks?.slice(50, 100));
 </script>
 <template>
   <div class="bg-base-200 p-2 rounded-lg border border-gray-200 dark:border-gray-700">
-    <div class="flex gap-1 items-center mb-1">
+    <div class="flex flex-wrap gap-1 items-center mb-1">
       <div class="cursor-default" v-for="(item, index) in firstRow" :key="index">
         <div class="tooltip" :data-tip="item.height">
           <div class="w-2 h-2 rounded-full" :class="item.color">&nbsp;</div>
         </div>
       </div>
     </div>
-    <div class="flex gap-1 items-center">
+    <div class="flex flex-wrap gap-1 items-center">
       <div class="cursor-default" v-for="(item, index) in secondRow" :key="index">
         <div class="tooltip" :data-tip="item.height">
           <div class="w-2 h-2 rounded-full" :class="item.color">&nbsp;</div>
