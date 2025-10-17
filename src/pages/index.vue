@@ -39,7 +39,7 @@ const chainStore = useBlockchain();
     <div
       class="flex md:!flex-row flex-col items-center justify-center mb-6 mt-14 gap-2"
     >
-      <div class="w-16 rounded-full">
+      <div class="w-24 rounded-full">
         <img src="/logo.png" alt="Logo" />
       </div>
       <h1 class="text-primary dark:invert text-3xl md:!text-6xl font-bold">
