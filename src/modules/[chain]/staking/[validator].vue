@@ -8,6 +8,7 @@ import {
   useMintStore,
   useStakingStore,
   useTxDialog,
+  useBaseStore,
 } from '@/stores';
 import { onMounted, computed, ref } from 'vue';
 import { Icon } from '@iconify/vue';
@@ -16,6 +17,7 @@ import {
   consensusPubkeyToHexAddress,
   operatorAddressToAccount,
   pubKeyToValcons,
+  valconsToBase64,
 } from '@/libs';
 import {
   PageRequest,
@@ -24,10 +26,14 @@ import {
   type PaginatedDelegations,
   type PaginatedTxs,
   type Validator,
+  type SlashingParam,
+  type SigningInfo,
+  type Block,
 } from '@/types';
 import PaginationBar from '@/components/PaginationBar.vue';
-import { fromBase64, toBase64 } from '@cosmjs/encoding';
+import { fromBase64, toBase64, fromHex } from '@cosmjs/encoding';
 import { stringToUint8Array, uint8ArrayToString } from '@/libs/utils';
+import UptimeBar from '@/components/UptimeBar.vue';
 
 const props = defineProps(['validator', 'chain']);
 
@@ -36,6 +42,7 @@ const blockchain = useBlockchain();
 const format = useFormatter();
 const dialog = useTxDialog();
 const page = new PageRequest();
+const baseStore = useBaseStore();
 
 const validator: string = props.validator;
 
@@ -55,6 +62,76 @@ const addresses = ref(
   }
 );
 const selfBonded = ref({} as Delegation);
+
+const latest = ref(0);
+const slashingParam = ref({} as SlashingParam);
+const signingInfo = ref({} as Record<string, SigningInfo>);
+interface BlockColor {
+  height: string;
+  color: string;
+}
+const blockColors = ref({} as Record<string, BlockColor[]>);
+
+function padding(blocks: BlockColor[] = []) {
+  const raw = Array(50)
+    .fill({ height: '0', color: 'bg-secondary' } as BlockColor)
+    .concat(blocks);
+  return raw.slice(raw.length - 50);
+}
+
+function fillblock(b: Block, direction: string = 'end') {
+  const hex = consensusPubkeyToHexAddress(v.value.consensus_pubkey);
+  const base64 = toBase64(fromHex(hex));
+  const sig = b.block.last_commit?.signatures.find(
+    (s) => s.validator_address === base64
+  );
+  const block = blockColors.value[base64] || [];
+  let color = {
+    height: b.block.header.height,
+    color: 'bg-red-500',
+  };
+  if (sig) {
+    color = {
+      height: b.block.header.height,
+      color:
+        sig.block_id_flag === 'BLOCK_ID_FLAG_COMMIT'
+          ? 'bg-green-500'
+          : 'bg-yellow-500',
+    };
+  }
+  if (direction === 'end') {
+    block.unshift(color);
+    if (block.length > 50) block.pop(); // Remove the last element
+  } else {
+    block.unshift(color);
+    if (block.length > 50) block.pop(); // Keep consistent for initial fill
+  }
+  blockColors.value[base64] = block;
+}
+
+function updateTotalSigningInfo() {
+  blockchain.rpc.getSlashingSigningInfos().then((x) => {
+    x.info?.forEach((i) => {
+      signingInfo.value[valconsToBase64(i.address)] = i;
+    });
+  });
+}
+
+const uptime = computed(() => {
+  const hex = consensusPubkeyToHexAddress(v.value.consensus_pubkey);
+  const base64 = toBase64(fromHex(hex));
+  const window = Number(slashingParam.value.signed_blocks_window || 0);
+  const signing = signingInfo.value[base64];
+  const uptime =
+    signing && window > 0
+      ? (window - Number(signing.missed_blocks_counter)) / window
+      : undefined;
+  return {
+    blocks: padding(blockColors.value[base64] || []),
+    uptime: uptime,
+    missed_blocks_counter: signing?.missed_blocks_counter,
+  };
+});
 
 addresses.value.account = operatorAddressToAccount(validator);
 // load self bond
@@ -173,6 +250,21 @@ onMounted(() => {
     // delegations disabled by default (perf)
     // pageload(1)
   }
+  blockchain.rpc.getSlashingParams().then((x) => {
+    slashingParam.value = x.params;
+  });
+  updateTotalSigningInfo();
+  baseStore.recents?.forEach((b) => {
+    fillblock(b, 'start');
+  });
+
+  baseStore.$subscribe((_, state) => {
+    const newHeight = Number(state.latest?.block?.header?.height || 0);
+    if (newHeight > latest.value) {
+      latest.value = newHeight;
+      fillblock(state.latest);
+    }
+  });
 });
 let showCopyToast = ref(0);
 const copyWebsite = async (url: string) => {
@@ -723,6 +815,22 @@ function mapDelegators(messages: any[]) {
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- UPTIME CARD -->
+    <div class="mt-3 bg-base-100 rounded-xl shadow-sm border border-base-200/60">
+        <div class="text-base font-semibold px-3 py-2">Uptime</div>
+        <div class="p-4">
+            <UptimeBar :blocks="uptime.blocks" />
+            <div class="flex justify-between items-center mt-2 text-sm">
+                <div>
+                    Uptime: {{ format.percent(uptime.uptime) }}
+                </div>
+                <div>
+                    Missed Blocks: {{ uptime.missed_blocks_counter }}
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- DELEGATIONS -->
