@@ -5,6 +5,7 @@ import { useStakingStore, useBaseStore, useBlockchain, useFormatter } from '@/st
 import UptimeBar from '@/components/UptimeBar.vue';
 import type { SlashingParam, SigningInfo, Block } from '@/types';
 import { consensusPubkeyToHexAddress, valconsToBase64 } from '@/libs';
+import { Icon } from '@iconify/vue';
 
 const props = defineProps(['chain']);
 
@@ -18,6 +19,7 @@ const live = ref(true);
 const slashingParam = ref({} as SlashingParam);
 const signingInfo = ref({} as Record<string, SigningInfo>);
 const consumerValidators = ref([] as { moniker: string; base64: string }[]);
+const favorites = ref<string[]>([]);
 
 interface BlockColor {
   height: string;
@@ -85,6 +87,24 @@ const grid = computed(() => {
   });
 });
 
+const favoriteValidators = computed(() => {
+  return grid.value.filter((v) => favorites.value.includes(v.base64));
+});
+
+const otherValidators = computed(() => {
+  return grid.value.filter((v) => !favorites.value.includes(v.base64));
+});
+
+function toggleFavorite(validatorAddress: string) {
+  const index = favorites.value.indexOf(validatorAddress);
+  if (index > -1) {
+    favorites.value.splice(index, 1);
+  } else {
+    favorites.value.push(validatorAddress);
+  }
+  localStorage.setItem('favoriteValidators', JSON.stringify(favorites.value));
+}
+
 const preload = ref(false);
 baseStore.$subscribe((_, state) => {
   const newHeight = Number(state.latest?.block?.header?.height || 0);
@@ -123,6 +143,11 @@ baseStore.$subscribe((_, state) => {
 
 onMounted(() => {
   live.value = true;
+
+  const favs = localStorage.getItem('favoriteValidators');
+  if (favs) {
+    favorites.value = JSON.parse(favs);
+  }
 
   // fill the recent blocks
   baseStore.recents?.forEach((b) => {
@@ -209,9 +234,7 @@ function changeTab(v: string) {
       <a class="tab text-gray-400 capitalize" :class="{ 'tab-active': tab === '2' }" @click="changeTab('2')">{{
         $t('module.blocks')
       }}</a>
-      <RouterLink :to="`/${chain}/uptime/customize`">
-        <a class="tab text-gray-400 capitalize">{{ $t('uptime.customize') }}</a>
-      </RouterLink>
+
     </div>
     <div class="bg-base-100 px-5 pt-5">
       <div class="flex items-center gap-x-4">
@@ -225,10 +248,32 @@ function changeTab(v: string) {
 
       <!-- grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-4 mt-4 -->
       <div :class="tab === '2' ? '' : 'hidden'">
+        <div v-if="favoriteValidators.length > 0">
+          <h3 class="text-lg font-semibold mt-4">Favorites</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
+            <div v-for="(unit, i) in favoriteValidators" :key="i" class="bg-base-100 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+              <div class="flex justify-between items-center py-0">
+                <label class="truncate text-sm font-semibold text-black dark:text-white">
+                  <Icon icon="mdi-star" class="text-yellow-400 mr-1 cursor-pointer" @click="toggleFavorite(unit.base64)" />
+                  {{ i + 1 }}.{{ unit.moniker }}
+                </label>
+                <div
+                  class="badge badge-sm bg-transparent border-0 font-bold"
+                  :class="Number(unit?.missed_blocks_counter || 0) > 10 ? 'text-red-500' : 'text-green-600'"
+                >
+                  {{ unit?.missed_blocks_counter }}
+                </div>
+              </div>
+              <UptimeBar :blocks="unit.blocks" class="mt-2" />
+            </div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
-          <div v-for="(unit, i) in grid" :key="i" class="bg-base-100 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+          <div v-for="(unit, i) in otherValidators" :key="i" class="bg-base-100 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center py-0">
               <label class="truncate text-sm font-semibold text-black dark:text-white">
+                <Icon icon="mdi-star-outline" class="text-gray-400 mr-1 cursor-pointer" @click="toggleFavorite(unit.base64)" />
                 {{ i + 1 }}.{{ unit.moniker }}
               </label>
               <div
@@ -254,6 +299,7 @@ function changeTab(v: string) {
         <table class="table table-compact w-full mt-5">
           <thead class="capitalize bg-base-200">
             <tr>
+              <td></td>
               <td>{{ $t('account.validator') }}</td>
               <td class="text-right">{{ $t('module.uptime') }}</td>
               <td>{{ $t('uptime.last_jailed_time') }}</td>
@@ -262,7 +308,47 @@ function changeTab(v: string) {
               <td>{{ $t('uptime.tombstoned') }}</td>
             </tr>
           </thead>
-          <tr v-for="(v, i) in grid" class="hover">
+          <tr v-for="(v, i) in favoriteValidators" class="hover">
+            <td>
+              <Icon icon="mdi-star" class="text-yellow-400 cursor-pointer" @click="toggleFavorite(v.base64)" />
+            </td>
+            <td>
+              <div class="truncate max-w-sm">{{ i + 1 }}. {{ v.moniker }}</div>
+            </td>
+            <td class="text-right">
+              <span :class="v.uptime && v.uptime > 0.95 ? 'text-green-500' : 'text-red-500'">
+                <div class="tooltip" :data-tip="`${v.missed_blocks_counter} missing blocks`">
+                  {{ format.percent(v.uptime) }}
+                </div>
+              </span>
+            </td>
+            <td>
+              <span
+                v-if="v.signing && !v.signing.jailed_until.startsWith('1970')"
+              >
+                <div
+                  class="tooltip"
+                  :data-tip="format.toDay(v.signing.jailed_until, 'long')"
+                >
+                  <span>{{
+                    format.toDay(v.signing.jailed_until, 'from')
+                  }}</span>
+                </div>
+              </span>
+            </td>
+            <td class="text-xs text-right">
+              <span v-if="v.signing && v.signing.jailed_until.startsWith('1970')" class="text-right">{{
+                format.percent(Number(v.signing.index_offset) / (latest - Number(v.signing.start_height)))
+              }}</span>
+              {{ v.signing?.index_offset }}
+            </td>
+            <td class="text-right">{{ v.signing?.start_height }}</td>
+            <td class="capitalize">{{ v.signing?.tombstoned }}</td>
+          </tr>
+          <tr v-for="(v, i) in otherValidators" class="hover">
+            <td>
+              <Icon icon="mdi-star-outline" class="text-gray-400 cursor-pointer" @click="toggleFavorite(v.base64)" />
+            </td>
             <td>
               <div class="truncate max-w-sm">{{ i + 1 }}. {{ v.moniker }}</div>
             </td>
