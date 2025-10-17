@@ -47,6 +47,7 @@ const dialog = useTxDialog();
 const page = new PageRequest();
 const baseStore = useBaseStore();
 const route = useRoute();
+const validator: string = props.validator;
 
 const v = ref({} as Validator);
 
