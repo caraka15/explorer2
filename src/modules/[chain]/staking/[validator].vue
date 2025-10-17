@@ -48,6 +48,8 @@ const page = new PageRequest();
 const baseStore = useBaseStore();
 const route = useRoute();
 
+const v = ref({} as Validator);
+
 watch(v, (newValue) => {
   if (newValue && route.hash) {
     nextTick(() => {
@@ -58,10 +60,6 @@ watch(v, (newValue) => {
     });
   }
 });
-
-const validator: string = props.validator;
-
-const v = ref({} as Validator);
 const cache = JSON.parse(localStorage.getItem('avatars') || '{}');
 const avatars = ref(cache || {});
 const identity = ref('');
@@ -96,6 +94,7 @@ function padding(blocks: BlockColor[] = []) {
 }
 
 function fillblock(b: Block, direction: string = 'end') {
+  if (!v.value.consensus_pubkey) return;
   const hex = consensusPubkeyToHexAddress(v.value.consensus_pubkey);
   const base64 = toBase64(fromHex(hex));
   const sig = b.block.last_commit?.signatures.find(
