@@ -35,7 +35,7 @@ import type {
 import PaginationBar from '@/components/PaginationBar.vue';
 import { fromBase64, toBase64, fromHex } from '@cosmjs/encoding';
 import { stringToUint8Array, uint8ArrayToString } from '@/libs/utils';
-import UptimeBar from '@/components/UptimeBar.vue';
+import ValidatorUptimeBar from '@/components/ValidatorUptimeBar.vue';
 
 const props = defineProps(['validator', 'chain']);
 
@@ -823,7 +823,7 @@ function mapDelegators(messages: any[]) {
     <div v-if="v.status === 'BOND_STATUS_BONDED'" class="mt-3 bg-base-100 rounded-xl shadow-sm border border-base-200/60">
         <div class="text-base font-semibold px-3 py-2">Uptime</div>
         <div class="p-4">
-            <UptimeBar :blocks="uptime.blocks" />
+            <ValidatorUptimeBar :blocks="uptime.blocks" />
             <div class="flex justify-between items-center mt-2 text-sm">
                 <div>
                     Uptime: {{ format.percent(uptime.uptime) }}

@@ -5,12 +5,24 @@ const props = defineProps({
   blocks: { type: Array as PropType<{ height: string; color: string }[]> },
 });
 
+const firstRow = computed(() => props.blocks?.slice(0, 25));
+const secondRow = computed(() => props.blocks?.slice(25, 50));
+
 </script>
 <template>
-  <div class="bg-base-200 p-2 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-    <div class="flex flex-nowrap gap-0.5 items-center">
-      <div class="tooltip flex-auto" v-for="(item, index) in props.blocks" :key="index" :data-tip="item.height">
-        <div style="height: 20px;" class="rounded-sm" :class="item.color">&nbsp;</div>
+  <div class="bg-base-200 pt-2 pl-2 pr-2 pb-0.5 rounded-lg border border-gray-200 dark:border-gray-700">
+    <div class="flex flex-wrap justify-between items-center mb-0.5">
+      <div class="cursor-default" v-for="(item, index) in firstRow" :key="index">
+        <div class="tooltip" :data-tip="item.height">
+          <div style="width: 10px; height: 10px;" class="rounded-sm" :class="item.color">&nbsp;</div>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-between items-center">
+      <div class="cursor-default" v-for="(item, index) in secondRow" :key="index">
+        <div class="tooltip" :data-tip="item.height">
+          <div style="width: 10px; height: 10px;" class="rounded-sm" :class="item.color">&nbsp;</div>
+        </div>
       </div>
     </div>
   </div>
