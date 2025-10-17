@@ -64,6 +64,7 @@ const addresses = ref(
   }
 );
 const selfBonded = ref({} as Delegation);
+const preload = ref(false);
 
 const latest = ref(0);
 const slashingParam = ref({} as SlashingParam);
@@ -109,6 +110,23 @@ function fillblock(b: Block, direction: string = 'end') {
     if (block.length > 50) block.pop(); // Keep consistent for initial fill
   }
   blockColors.value[base64] = block;
+}
+
+function preFill() {
+  // preload 25 blocks
+  let promise = Promise.resolve();
+  for (let i = latest.value - baseStore.recents.length; i > latest.value - 25 && i > 1; i -= 1) {
+    promise = promise.then(
+      () =>
+        new Promise((resolve) => {
+            if (i > latest.value - 25)
+              baseStore.fetchBlock(i).then((x) => {
+                fillblock(x, 'start');
+                resolve();
+              });
+        })
+    );
+  }
 }
 
 function updateTotalSigningInfo() {
@@ -256,14 +274,15 @@ onMounted(() => {
     slashingParam.value = x.params;
   });
   updateTotalSigningInfo();
-  baseStore.recents?.forEach((b) => {
-    fillblock(b, 'start');
-  });
 
   baseStore.$subscribe((_, state) => {
     const newHeight = Number(state.latest?.block?.header?.height || 0);
     if (newHeight > latest.value) {
       latest.value = newHeight;
+      if (!preload.value) {
+        preFill();
+        preload.value = true;
+      }
       fillblock(state.latest);
     }
   });
@@ -820,7 +839,7 @@ function mapDelegators(messages: any[]) {
     </div>
 
     <!-- UPTIME CARD -->
-    <div v-if="v.status === 'BOND_STATUS_BONDED'" id="uptime" class="mt-3 bg-base-100 rounded-xl shadow-sm border border-base-200/60">
+    <div v-if="v.status === 'BOND_STATUS_BONDED'" id="uptime" class="mt-3 bg-base-100 rounded-xl shadow-sm border border-base-200/60" style="scroll-margin-top: 5rem;">
         <div class="text-base font-semibold px-3 py-2">Uptime</div>
         <div class="p-4">
             <ValidatorUptimeBar :blocks="uptime.blocks" />
