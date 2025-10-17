@@ -14,7 +14,7 @@ const getTooltipText = (item: { height: string; color: string }) => {
   } else if (item.color === 'bg-red-500') {
     status = 'Missed';
   }
-  return `Block: ${item.height}\nStatus: ${status}`;
+  return `${item.height}\n${status}`;
 };
 
 </script>
@@ -28,4 +28,8 @@ const getTooltipText = (item: { height: string; color: string }) => {
   </div>
 </template>
 
-<style></style>
+<style>
+.tooltip::after {
+  white-space: pre-line;
+}
+</style>
