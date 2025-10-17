@@ -20,7 +20,7 @@ const getTooltipText = (item: { height: string; color: string }) => {
 </script>
 <template>
   <div class="bg-base-200 p-2 rounded-lg border border-gray-200 dark:border-gray-700">
-    <div class="flex flex-nowrap gap-0.5 items-center">
+    <div class="grid grid-flow-col auto-cols-fr gap-1">
       <div class="tooltip flex-auto" v-for="(item, index) in props.blocks" :key="index" :data-tip="getTooltipText(item)">
         <div style="height: 20px;" class="rounded-sm" :class="item.color">&nbsp;</div>
       </div>
