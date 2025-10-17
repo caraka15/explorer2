@@ -21,14 +21,16 @@ import {
 } from '@/libs';
 import {
   PageRequest,
-  type Coin,
-  type Delegation,
-  type PaginatedDelegations,
-  type PaginatedTxs,
-  type Validator,
-  type SlashingParam,
-  type SigningInfo,
-  type Block,
+} from '@/types';
+import type {
+  Coin,
+  Delegation,
+  PaginatedDelegations,
+  PaginatedTxs,
+  Validator,
+  SlashingParam,
+  SigningInfo,
+  Block,
 } from '@/types';
 import PaginationBar from '@/components/PaginationBar.vue';
 import { fromBase64, toBase64, fromHex } from '@cosmjs/encoding';
