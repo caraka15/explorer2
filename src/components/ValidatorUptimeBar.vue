@@ -36,5 +36,10 @@ const getTooltipText = (item: { height: string; color: string }) => {
 <style>
 .tooltip::after {
   white-space: pre-line;
+  z-index: 9999 !important;
+}
+
+.tooltip::before {
+  z-index: 9999 !important;
 }
 </style>
