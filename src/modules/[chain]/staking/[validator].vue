@@ -116,8 +116,8 @@ function fillblock(b: Block, direction: string = 'end') {
     };
   }
   if (direction === 'end') {
-    block.unshift(color);
-    if (block.length > 50) block.pop(); // Remove the last element
+    block.push(color);
+    if (block.length > 50) block.shift(); // Remove the first element
   } else {
     block.unshift(color);
     if (block.length > 50) block.pop(); // Keep consistent for initial fill
