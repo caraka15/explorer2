@@ -820,7 +820,7 @@ function mapDelegators(messages: any[]) {
     </div>
 
     <!-- UPTIME CARD -->
-    <div v-if="v.status === 'BOND_STATUS_BONDED'" class="mt-3 bg-base-100 rounded-xl shadow-sm border border-base-200/60">
+    <div v-if="v.status === 'BOND_STATUS_BONDED'" id="uptime" class="mt-3 bg-base-100 rounded-xl shadow-sm border border-base-200/60">
         <div class="text-base font-semibold px-3 py-2">Uptime</div>
         <div class="p-4">
             <ValidatorUptimeBar :blocks="uptime.blocks" />

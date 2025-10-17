@@ -253,8 +253,8 @@ function changeTab(v: string) {
           <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
             <div v-for="(unit, i) in favoriteValidators" :key="i" class="bg-base-100 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
               <div class="flex justify-between items-center py-0">
-                <label class="truncate text-sm font-semibold text-black dark:text-white">
-                  <Icon icon="mdi-star" class="text-yellow-400 mr-1 cursor-pointer" @click="toggleFavorite(unit.base64)" />
+                <label class="truncate text-sm font-semibold text-black dark:text-white flex items-center">
+                  <Icon icon="mdi-star" class="text-yellow-400 mr-2 cursor-pointer text-lg" @click="toggleFavorite(unit.base64)" />
                   {{ i + 1 }}.{{ unit.moniker }}
                 </label>
                 <div
@@ -271,12 +271,11 @@ function changeTab(v: string) {
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
           <div v-for="(unit, i) in otherValidators" :key="i" class="bg-base-100 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
-            <div class="flex justify-between items-center py-0">
-              <label class="truncate text-sm font-semibold text-black dark:text-white">
-                <Icon icon="mdi-star-outline" class="text-gray-400 mr-1 cursor-pointer" @click="toggleFavorite(unit.base64)" />
-                {{ i + 1 }}.{{ unit.moniker }}
-              </label>
-              <div
+                          <div class="flex justify-between items-center py-0">
+                            <label class="truncate text-sm font-semibold text-black dark:text-white flex items-center">
+                              <Icon icon="mdi-star-outline" class="text-gray-400 mr-2 cursor-pointer text-lg" @click="toggleFavorite(unit.base64)" />
+                              {{ i + 1 }}.{{ unit.moniker }}
+                            </label>              <div
                 class="badge badge-sm bg-transparent border-0 font-bold"
                 :class="Number(unit?.missed_blocks_counter || 0) > 10 ? 'text-red-500' : 'text-green-600'"
               >
@@ -310,7 +309,7 @@ function changeTab(v: string) {
           </thead>
           <tr v-for="(v, i) in favoriteValidators" class="hover">
             <td>
-              <Icon icon="mdi-star" class="text-yellow-400 cursor-pointer" @click="toggleFavorite(v.base64)" />
+              <Icon icon="mdi-star" class="text-yellow-400 cursor-pointer text-lg" @click="toggleFavorite(v.base64)" />
             </td>
             <td>
               <div class="truncate max-w-sm">{{ i + 1 }}. {{ v.moniker }}</div>
@@ -347,7 +346,7 @@ function changeTab(v: string) {
           </tr>
           <tr v-for="(v, i) in otherValidators" class="hover">
             <td>
-              <Icon icon="mdi-star-outline" class="text-gray-400 cursor-pointer" @click="toggleFavorite(v.base64)" />
+              <Icon icon="mdi-star-outline" class="text-gray-400 cursor-pointer text-lg" @click="toggleFavorite(v.base64)" />
             </td>
             <td>
               <div class="truncate max-w-sm">{{ i + 1 }}. {{ v.moniker }}</div>
