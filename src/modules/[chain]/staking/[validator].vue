@@ -10,7 +10,8 @@ import {
   useTxDialog,
   useBaseStore,
 } from '@/stores';
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, computed, ref, watch, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import CommissionRate from '@/components/ValidatorCommissionRate.vue';
 import {
@@ -45,6 +46,18 @@ const format = useFormatter();
 const dialog = useTxDialog();
 const page = new PageRequest();
 const baseStore = useBaseStore();
+const route = useRoute();
+
+watch(v, (newValue) => {
+  if (newValue && route.hash) {
+    nextTick(() => {
+      const el = document.querySelector(route.hash);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+});
 
 const validator: string = props.validator;
 
