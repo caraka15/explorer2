@@ -14,19 +14,14 @@ const getTooltipText = (item: { height: string; color: string }) => {
   } else if (item.color === 'bg-red-500') {
     status = 'Missed';
   }
-  return `${item.height}\n${status}`;
+  return `${item.height}`;
 };
 
 </script>
 <template>
-  <div class="bg-base-200 p-2 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+  <div class="bg-base-200 p-2 rounded-lg border border-gray-200 dark:border-gray-700">
     <div class="grid grid-flow-col auto-cols-fr gap-1">
-      <div 
-        class="tooltip tooltip-top" 
-        v-for="(item, index) in props.blocks" 
-        :key="index" 
-        :data-tip="getTooltipText(item)"
-      >
+      <div class="tooltip flex-auto" v-for="(item, index) in props.blocks" :key="index" :data-tip="getTooltipText(item)">
         <div style="height: 20px;" class="rounded-sm" :class="item.color">&nbsp;</div>
       </div>
     </div>
@@ -36,10 +31,5 @@ const getTooltipText = (item: { height: string; color: string }) => {
 <style>
 .tooltip::after {
   white-space: pre-line;
-  z-index: 9999 !important;
-}
-
-.tooltip::before {
-  z-index: 9999 !important;
 }
 </style>
