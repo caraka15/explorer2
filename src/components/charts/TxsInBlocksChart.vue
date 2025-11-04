@@ -45,5 +45,5 @@ const series = computed(() => {
 </script>
 
 <template>
-  <ApexCharts type="bar" height="150" :options="options" :series="series" />
+  <ApexCharts type="bar" height="150" :options="options as any" :series="series" />
 </template>

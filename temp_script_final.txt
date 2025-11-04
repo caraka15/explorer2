@@ -1,0 +1,294 @@
+<script lang="ts" setup>
+import { useBlockchain, useFormatter, useStakingStore, useTxDialog } from '@/stores';
+import DynamicComponent from '@/components/dynamic/DynamicComponent.vue';
+import DonutChart from '@/components/charts/DonutChart.vue';
+import { computed, ref } from '@vue/reactivity';
+import { onMounted, watch } from 'vue';
+import { Icon } from '@iconify/vue';
+
+import { PageRequest } from '@/types';
+import type { AuthAccount, Delegation, TxResponse, DelegatorRewards, UnbondingResponses } from '@/types';
+import type { Coin } from '@cosmjs/amino';
+import Countdown from '@/components/Countdown.vue';
+import { fromBase64 } from '@cosmjs/encoding';
+
+const props = defineProps(['address', 'chain']);
+
+const blockchain = useBlockchain();
+const stakingStore = useStakingStore();
+const dialog = useTxDialog();
+const format = useFormatter();
+const account = ref({} as AuthAccount);
+const delegations = ref<Delegation[]>([]);
+const rewards = ref({} as DelegatorRewards);
+const balances = ref<Coin[]>([]);
+const unbonding = ref<UnbondingResponses[]>([]);
+const unbondingTotal = ref(0);
+const chart = {};
+const pageSizeOptions = [20, 50, 100];
+const allTxs = ref<TxResponse[]>([]);
+const txPage = ref(1);
+const txPageSize = ref(pageSizeOptions[0]);
+const txLoading = ref(false);
+const allReceived = ref<TxResponse[]>([]);
+const receivedPage = ref(1);
+const receivedPageSize = ref(pageSizeOptions[0]);
+const receivedLoading = ref(false);
+onMounted(() => {
+  loadAccount(props.address);
+});
+const totalAmountByCategory = computed(() => {
+  let sumDel = 0;
+  delegations.value?.forEach((x) => {
+    sumDel += Number(x.balance.amount);
+  });
+  let sumRew = 0;
+  rewards.value?.total?.forEach((x) => {
+    sumRew += Number(x.amount);
+  });
+  let sumBal = 0;
+  balances.value?.forEach((x) => {
+    sumBal += Number(x.amount);
+  });
+  let sumUn = 0;
+  unbonding.value?.forEach((x) => {
+    x.entries?.forEach((y) => {
+      sumUn += Number(y.balance);
+    });
+  });
+  return [sumBal, sumDel, sumRew, sumUn];
+});
+
+const labels = ['Balance', 'Delegation', 'Reward', 'Unbonding'];
+
+const totalAmount = computed(() => {
+  return totalAmountByCategory.value.reduce((p, c) => c + p, 0);
+});
+
+const totalValue = computed(() => {
+  let value = 0;
+  delegations.value?.forEach((x) => {
+    value += format.tokenValueNumber(x.balance);
+  });
+  rewards.value?.total?.forEach((x) => {
+    value += format.tokenValueNumber(x);
+  });
+  balances.value?.forEach((x) => {
+    value += format.tokenValueNumber(x);
+  });
+  unbonding.value?.forEach((x) => {
+    x.entries?.forEach((y) => {
+      value += format.tokenValueNumber({ amount: y.balance, denom: stakingStore.params.bond_denom });
+    });
+  });
+  return format.formatNumber(value, '0,0.00');
+});
+
+function loadAccount(address: string) {
+  resetTxState();
+  resetReceivedState();
+  blockchain.rpc.getAuthAccount(address).then((x) => {
+    account.value = x.account;
+  });
+  blockchain.rpc.getDistributionDelegatorRewards(address).then((x) => {
+    rewards.value = x;
+  });
+  blockchain.rpc.getStakingDelegations(address).then((x) => {
+    delegations.value = x.delegation_responses;
+  });
+  blockchain.rpc.getBankBalances(address).then((x) => {
+    balances.value = x.balances;
+  });
+  blockchain.rpc.getStakingDelegatorUnbonding(address).then((x) => {
+    unbondingTotal.value = 0;
+    unbonding.value = x.unbonding_responses;
+    x.unbonding_responses?.forEach((y) => {
+      y.entries.forEach((z) => {
+        unbondingTotal.value += Number(z.balance);
+      });
+    });
+  });
+
+  void loadAllTransactions(address);
+  void loadAllRecentReceived(address);
+}
+
+function updateEvent() {
+  loadAccount(props.address);
+}
+
+function resetTxState() {
+  txPage.value = 1;
+  allTxs.value = [];
+}
+
+function resetReceivedState() {
+  receivedPage.value = 1;
+  allReceived.value = [];
+}
+
+const displayedTxs = computed(() => {
+  const start = (txPage.value - 1) * txPageSize.value;
+  return allTxs.value.slice(start, start + txPageSize.value);
+});
+const txTotalItems = computed(() => allTxs.value.length);
+const txTotalPages = computed(() => (txTotalItems.value ? Math.ceil(txTotalItems.value / txPageSize.value) : 0));
+const txRange = computed(() => {
+  const items = displayedTxs.value;
+  if (!items.length) return null;
+  const start = (txPage.value - 1) * txPageSize.value + 1;
+  return { start, end: start + items.length - 1 };
+});
+const txHasPrev = computed(() => txPage.value > 1);
+const txHasNext = computed(() => (txTotalPages.value ? txPage.value < txTotalPages.value : false));
+const showTxPagination = computed(() => txTotalPages.value > 1);
+const txPageNumbers = computed(() => buildPageList(txPage.value, txTotalPages.value));
+
+const displayedReceived = computed(() => {
+  const start = (receivedPage.value - 1) * receivedPageSize.value;
+  return allReceived.value.slice(start, start + receivedPageSize.value);
+});
+const receivedTotalItems = computed(() => allReceived.value.length);
+const receivedTotalPages = computed(() =>
+  receivedTotalItems.value ? Math.ceil(receivedTotalItems.value / receivedPageSize.value) : 0
+);
+const receivedRange = computed(() => {
+  const items = displayedReceived.value;
+  if (!items.length) return null;
+  const start = (receivedPage.value - 1) * receivedPageSize.value + 1;
+  return { start, end: start + items.length - 1 };
+});
+const receivedHasPrev = computed(() => receivedPage.value > 1);
+const receivedHasNext = computed(() =>
+  receivedTotalPages.value ? receivedPage.value < receivedTotalPages.value : false
+);
+const showReceivedPagination = computed(() => receivedTotalPages.value > 1);
+const receivedPageNumbers = computed(() => buildPageList(receivedPage.value, receivedTotalPages.value));
+
+watch(txPageSize, () => {
+  txPage.value = 1;
+});
+watch(receivedPageSize, () => {
+  receivedPage.value = 1;
+});
+watch(txTotalPages, (total) => {
+  if (!total) {
+    txPage.value = 1;
+    return;
+  }
+  if (txPage.value > total) {
+    txPage.value = total;
+  }
+});
+watch(receivedTotalPages, (total) => {
+  if (!total) {
+    receivedPage.value = 1;
+    return;
+  }
+  if (receivedPage.value > total) {
+    receivedPage.value = total;
+  }
+});
+
+function goToTxPage(page: number) {
+  if (txLoading.value) return;
+  if (page < 1 || page === txPage.value) return;
+  if (txTotalPages.value && page > txTotalPages.value) return;
+  txPage.value = page;
+}
+
+function goToReceivedPage(page: number) {
+  if (receivedLoading.value) return;
+  if (page < 1 || page === receivedPage.value) return;
+  if (receivedTotalPages.value && page > receivedTotalPages.value) return;
+  receivedPage.value = page;
+}
+
+function buildReceivedQuery(address: string) {
+  return `?order_by=2&events=coin_received.receiver='${address}'`;
+}
+
+function toTimestamp(value?: string) {
+  const time = value ? Date.parse(value) : NaN;
+  return Number.isNaN(time) ? 0 : time;
+}
+
+function buildPageList(current: number, total: number) {
+  if (!total) return [];
+  const maxButtons = 5;
+  let start = Math.max(1, current - Math.floor(maxButtons / 2));
+  let end = Math.min(total, start + maxButtons - 1);
+  start = Math.max(1, end - maxButtons + 1);
+  const pages: number[] = [];
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+}
+
+async function loadAllTransactions(address: string) {
+  txLoading.value = true;
+  const aggregated: TxResponse[] = [];
+  try {
+    const fetchSize = 100;
+    let offset = 0;
+    while (true) {
+      const request = new PageRequest();
+      request.setPageSize(fetchSize);
+      request.offset = offset;
+      request.count_total = offset === 0;
+      const response = await blockchain.rpc.getTxsBySender(address, request);
+      const batch = response.tx_responses || [];
+      if (!batch.length) break;
+      aggregated.push(...batch);
+      if (batch.length < fetchSize) break;
+      offset += fetchSize;
+    }
+    allTxs.value = sortAndDeduplicate(aggregated);
+  } finally {
+    txLoading.value = false;
+  }
+}
+
+async function loadAllRecentReceived(address: string) {
+  receivedLoading.value = true;
+  const aggregated: TxResponse[] = [];
+  try {
+    const fetchSize = 100;
+    let offset = 0;
+    while (true) {
+      const request = new PageRequest();
+      request.setPageSize(fetchSize);
+      request.offset = offset;
+      request.count_total = offset === 0;
+      const response = await blockchain.rpc.getTxs(buildReceivedQuery(address), {}, request);
+      const batch = response.tx_responses || [];
+      if (!batch.length) break;
+      aggregated.push(...batch);
+      if (batch.length < fetchSize) break;
+      offset += fetchSize;
+    }
+    allReceived.value = sortAndDeduplicate(aggregated);
+  } finally {
+    receivedLoading.value = false;
+  }
+}
+
+function sortAndDeduplicate(items: TxResponse[]) {
+  const deduped = new Map<string, TxResponse>();
+  items.forEach((item) => {
+    const key = item?.txhash || `${item?.height ?? 'unknown'}-${deduped.size}`;
+    deduped.set(key, item);
+  });
+  return Array.from(deduped.values()).sort((a, b) => toTimestamp(b?.timestamp) - toTimestamp(a?.timestamp));
+}
+
+
+function mapAmount(events: { type: string; attributes: { key: string; value: string }[] }[]) {
+  if (!events) return [];
+  return events
+    .find((x) => x.type === 'coin_received')
+    ?.attributes.filter((x) => x.key === 'YW1vdW50' || x.key === `amount`)
+    .map((x) => (x.key === 'amount' ? x.value : String.fromCharCode(...fromBase64(x.value))));
+}
+</script>

@@ -283,15 +283,16 @@ export class CosmosRestClient extends BaseRestClient<RequestRegistry> {
   }
   // tx
   async getTxsBySender(sender: string, page?: PageRequest) {
-    if (!page) page = new PageRequest();
-
-    let query = `?events=message.sender='${sender}'&pagination.limit=${page.limit}&pagination.offset=${
-      page.offset || 0
-    }`;
-    if (semver.gte(this.version.replaceAll('v', ''), '0.50.0')) {
-      query = `?query=message.sender='${sender}'&pagination.limit=${page.limit}&pagination.offset=${page.offset || 0}`;
-    }
-    return this.request(this.registry.tx_txs, {}, query);
+    const requestPage = page || new PageRequest();
+    const paginationQuery = requestPage.toQueryString();
+    const clauses = [
+      semver.gte(this.version.replaceAll('v', ''), '0.50.0')
+        ? `query=message.sender='${sender}'`
+        : `events=message.sender='${sender}'`,
+      'order_by=2',
+      paginationQuery,
+    ].filter(Boolean);
+    return this.request(this.registry.tx_txs, {}, `?${clauses.join('&')}`);
   }
   // query ibc sending msgs
   // ?&pagination.reverse=true&events=send_packet.packet_src_channel='${channel}'&events=send_packet.packet_src_port='${port}'

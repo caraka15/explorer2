@@ -8,7 +8,8 @@ import { codeToHtml } from 'shiki';
 import { useWasmStore } from '@/modules/[chain]/cosmwasm/WasmStore';
 import { toBase64 } from '@cosmjs/encoding';
 
-import { JsonViewer } from 'vue3-json-viewer';
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 import { CosmjsOfflineSigner } from '@leapwallet/cosmos-snap-provider';
 
 interface Verification {
@@ -241,15 +242,13 @@ function callFunction(title: string, method: string, arg: Argument) {
                   >
                   <label v-else class="btn btn-sm" @click="callFunction(title, method, props)">{{ method }}</label>
                 </div>
-                <div v-if="result[`${title}-${method}`]" class="mt-2">
-                  <JsonViewer
-                    :value="result[`${title}-${method}`]"
-                    :theme="baseStore.theme || 'dark'"
-                    style="background: transparent"
-                    copyable
-                    boxed
-                    sort
-                    :expand-depth="5"
+                <div v-if="result[`${title}-${method}`]" class="mt-2 overflow-auto" style="max-height: 400px;">
+                  <VueJsonPretty
+                    :data="result[`${title}-${method}`]"
+                    :deep="3"
+                    :show-line="true"
+                    :show-double-quotes="true"
+                    :show-length="true"
                   />
                 </div>
               </div>
@@ -300,3 +299,9 @@ function callFunction(title: string, method: string, arg: Argument) {
     </div>
   </div>
 </template>
+
+<style scoped>
+:deep(.vjs-tree) {
+  font-size: 12px;
+}
+</style>

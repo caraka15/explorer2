@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { useBaseStore, useBlockchain, useFormatter } from '@/stores';
 import DynamicComponent from '@/components/dynamic/DynamicComponent.vue';
-import { computed, ref } from '@vue/reactivity';
+import { computed, ref } from 'vue';
 import type { Tx, TxResponse } from '@/types';
-
-import { JsonViewer } from 'vue3-json-viewer';
-// if you used v1.0.5 or latster ,you should add import "vue3-json-viewer/dist/index.css"
-import 'vue3-json-viewer/dist/index.css';
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
 const props = defineProps(['hash', 'chain']);
 
@@ -19,9 +17,13 @@ const tx = ref(
     tx_response: TxResponse;
   }
 );
+
+const isJsonExpanded = ref(true);
+
 if (props.hash) {
   blockchain.rpc.getTx(props.hash).then((x) => (tx.value = x));
 }
+
 const messages = computed(() => {
   return (
     tx.value.tx?.body?.messages.map((x) => {
@@ -33,7 +35,16 @@ const messages = computed(() => {
     }) || []
   );
 });
+
+const formattedJson = computed(() => {
+  return JSON.stringify(tx.value, null, 2);
+});
+
+const copyJson = () => {
+  navigator.clipboard.writeText(formattedJson.value);
+};
 </script>
+
 <template>
   <div>
     <div class="tabs tabs-boxed bg-transparent mb-4">
@@ -108,7 +119,7 @@ const messages = computed(() => {
 
     <div v-if="tx.tx_response" class="bg-base-100 px-4 pt-3 pb-4 rounded shadow mb-4">
       <h2 class="card-title truncate mb-2">{{ $t('account.messages') }}: ({{ messages.length }})</h2>
-      <div v-for="(msg, i) in messages">
+      <div v-for="(msg, i) in messages" :key="i">
         <div class="border border-slate-400 rounded-md mt-4">
           <DynamicComponent :value="msg" />
         </div>
@@ -117,16 +128,32 @@ const messages = computed(() => {
     </div>
 
     <div v-if="tx.tx_response" class="bg-base-100 px-4 pt-3 pb-4 rounded shadow">
-      <h2 class="card-title truncate mb-2">JSON</h2>
-      <JsonViewer
-        :value="tx"
-        :theme="baseStore.theme"
-        style="background: transparent"
-        copyable
-        boxed
-        sort
-        expand-depth="5"
-      />
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="card-title truncate">JSON</h2>
+        <div class="flex gap-2">
+          <button @click="copyJson" class="btn btn-xs btn-ghost">Copy</button>
+          <button @click="isJsonExpanded = !isJsonExpanded" class="btn btn-xs btn-ghost">
+            {{ isJsonExpanded ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+      </div>
+      
+      <div v-if="isJsonExpanded" class="overflow-auto" style="max-height: 600px;">
+        <VueJsonPretty
+          :data="tx"
+          :deep="3"
+          :show-line="true"
+          :show-double-quotes="true"
+          :show-length="true"
+          :collapsedNodeLength="5"
+        />
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+:deep(.vjs-tree) {
+  font-size: 12px;
+}
+</style>

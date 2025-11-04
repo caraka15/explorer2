@@ -291,7 +291,7 @@ const currencySign = computed(() => {
           <ApexCharts
             type="area"
             height="280"
-            :options="chartConfig"
+            :options="chartConfig as any"
             :series="changeData"
           />
         </div>

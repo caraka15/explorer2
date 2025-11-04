@@ -18,9 +18,8 @@ import DynamicComponent from '@/components/dynamic/DynamicComponent.vue';
 import { useRoute } from 'vue-router';
 import type { ContractInfo, PaginabledContractStates } from '../types';
 
-import { JsonViewer } from 'vue3-json-viewer';
-// if you used v1.0.5 or latster ,you should add import "vue3-json-viewer/dist/index.css"
-import 'vue3-json-viewer/dist/index.css';
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
 const chainStore = useBlockchain();
 const baseStore = useBaseStore();
@@ -148,6 +147,8 @@ const query = ref('');
 const result = ref({});
 const queries = ref<string[]>([]);
 const tab = ref('detail');
+
+const stateData = ref<any>({});
 </script>
 <template>
   <div>
@@ -192,20 +193,18 @@ const tab = ref('detail');
         <div class="flex items-center justify-between px-3 pt-2 mb-4">
           <div class="text-lg">{{ $t('cosmwasm.contract_states') }}</div>
         </div>
-        <div class="overflow-auto">
-          <JsonViewer
-            :value="
+        <div class="overflow-auto" style="max-height: 600px;">
+          <VueJsonPretty
+            :data="
               state.models?.map((v) => ({
                 key: format.hexToString(v.key),
                 value: JSON.parse(format.base64ToString(v.value)),
-              })) || ''
+              })) || []
             "
-            :theme="baseStore.theme || 'dark'"
-            style="background: transparent"
-            copyable
-            boxed
-            sort
-            :expand-depth="5"
+            :deep="3"
+            :show-line="true"
+            :show-double-quotes="true"
+            :show-length="true"
           />
           <PaginationBar :limit="pageRequest.limit" :total="state.pagination?.total" :callback="pageloadState" />
         </div>
@@ -341,15 +340,21 @@ const tab = ref('detail');
       <div class="flex items-center justify-between px-3 pt-2 mb-4">
         <div class="text-lg font-semibold">{{ $t('cosmwasm.result') }}</div>
       </div>
-      <JsonViewer
-        :value="result"
-        :theme="baseStore.theme"
-        style="background: transparent"
-        copyable
-        boxed
-        sort
-        :expand-depth="5"
-      />
+      <div class="overflow-auto" style="max-height: 600px;">
+        <VueJsonPretty
+          :data="result"
+          :deep="3"
+          :show-line="true"
+          :show-double-quotes="true"
+          :show-length="true"
+        />
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+:deep(.vjs-tree) {
+  font-size: 12px;
+}
+</style>

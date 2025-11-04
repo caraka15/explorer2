@@ -109,7 +109,7 @@ const chartConfig = computed(() => {
       {{ `Updated at ${format.toDay(props.commission?.update_time, 'short')}` }}
     </div>
     <div class="w-80 m-auto">
-      <ApexCharts type="donut" :options="chartConfig" :series="series" />
+      <ApexCharts type="donut" :options="chartConfig as any" :series="series" />
     </div>
     <div>
       <div class="flex items-center justify-center flex-wrap gap-x-3">

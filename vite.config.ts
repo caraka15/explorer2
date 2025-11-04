@@ -7,14 +7,26 @@ import Layouts from 'vite-plugin-vue-layouts';
 import DefineOptions from 'unplugin-vue-define-options/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import Pages from 'vite-plugin-pages';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 
 export default defineConfig({
+  server: {
+    port: 8080,
+  },
   define: {
     'process.env': {},
   },
   plugins: [
+    nodePolyfills({
+      include: ['crypto', 'stream', 'util'],
+      globals: {
+        Buffer: true,
+        global: true,
+        process: true,
+      },
+    }),
     vue({
       template: {
         compilerOptions: {
