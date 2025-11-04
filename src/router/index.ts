@@ -11,14 +11,23 @@ const router = createRouter({
 });
 
 //update current blockchain
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const { chain } = to.params;
-  if (chain) {
-    const blockchain = useBlockchain();
-    if (chain !== blockchain.chainName) {
-      blockchain.setCurrent(chain.toString());
-    }
-  }
+  if (!chain) return;
+
+  const blockchain = useBlockchain();
+  const requestedChain = chain.toString();
+  const normalizedChain = await blockchain.setCurrent(requestedChain);
+
+  if (!normalizedChain || normalizedChain === requestedChain) return;
+
+  const normalizedPath = to.path.replace(/^\/[^/]+/, `/${normalizedChain}`);
+  return {
+    path: normalizedPath,
+    query: to.query,
+    hash: to.hash,
+    replace: true,
+  };
 });
 
 // Docs: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards

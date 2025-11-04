@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import type { ChainConfig, Endpoint } from '@/types/chaindata';
 import { useDashboard} from './useDashboard';
 import type { NavGroup, NavLink, NavSectionTitle, VerticalNavItems } from '@/layouts/types';
-import { useRouter } from 'vue-router';
+import type { RouteRecordNormalized } from 'vue-router';
 import { CosmosRestClient } from '@/libs/client';
 import {
   useBankStore,
@@ -51,10 +51,10 @@ export const useBlockchain = defineStore('blockchain', {
       // @ts-ignore
       return this.current && this.current.providerChain;
     },
-    computedChainMenu() {
+  },
+  actions: {
+    getChainMenu(routes: RouteRecordNormalized[]): VerticalNavItems {
       let currNavItem: VerticalNavItems = [];
-      const router = useRouter();
-      const routes = router?.getRoutes() || [];
       if (this.current && routes) {
         if (this.current?.themeColor) {
           const { color } = hexToRgb(this.current?.themeColor);
@@ -121,8 +121,7 @@ export const useBlockchain = defineStore('blockchain', {
         } as NavLink,
       ];
     },
-  },
-  actions: {
+
     async initial() {
       // this.current?.themeColor {
       //     const { global } = useTheme();
@@ -165,20 +164,30 @@ export const useBlockchain = defineStore('blockchain', {
       this.rpc = CosmosRestClient.newStrategy(endpoint.address, this.current);
       localStorage.setItem(`endpoint-${this.chainName}`, JSON.stringify(endpoint));
     },
-    async setCurrent(name: string) {
+    async setCurrent(name: string): Promise<string | undefined> {
       // Ensure chains are loaded due to asynchronous calls.
       if (this.dashboard.length === 0) {
         await this.dashboard.initial();
       }
 
       // Find the case-sensitive name for the chainName, else simply use the parameter-value.
-      const caseSensitiveName =
-        Object.keys(this.dashboard.chains).find((x) => x.toLowerCase() === name.toLowerCase()) || name;
+      const caseSensitiveName = Object.keys(this.dashboard.chains).find(
+        (x) => x.toLowerCase() === name.toLowerCase()
+      );
+      const fallbackName =
+        caseSensitiveName ||
+        (this.chainName && this.dashboard.chains[this.chainName] ? this.chainName : Object.keys(this.dashboard.chains)[0]);
+
+      // Bail out if no chains are available. This can happen during first load on an empty dataset.
+      if (!fallbackName) {
+        return undefined;
+      }
 
       // Update chainName if needed
-      if (caseSensitiveName !== this.chainName) {
-        this.chainName = caseSensitiveName;
+      if (fallbackName !== this.chainName) {
+        this.chainName = fallbackName;
       }
+      return fallbackName;
     },
     supportModule(mod: string) {
       return !this.current?.features || this.current.features.includes(mod);

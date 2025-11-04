@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 // Components
 import newFooter from '@/layouts/components/NavFooter.vue';
@@ -28,6 +29,7 @@ import AdBanner from '@/components/ad/AdBanner.vue';
 const dashboard = useDashboard();
 dashboard.initial();
 const blockchain = useBlockchain();
+const router = useRouter();
 blockchain.randomSetupEndpoint();
 const baseStore = useBaseStore();
 
@@ -82,6 +84,8 @@ dayjs();
 const show_ad = computed(() => {
   return location.hostname.indexOf('ping.pub') > -1;
 });
+
+const chainMenu = computed(() => blockchain.getChainMenu(router.getRoutes()));
 </script>
 
 <template>
@@ -103,7 +107,7 @@ const show_ad = computed(() => {
           <Icon icon="mdi-close" class="text-2xl" />
         </div>
       </div>
-      <div v-for="(item, index) of blockchain.computedChainMenu" :key="index" class="px-2">
+      <div v-for="(item, index) of chainMenu" :key="index" class="px-2">
         <div
           v-if="isNavGroup(item)"
           :tabindex="index"
