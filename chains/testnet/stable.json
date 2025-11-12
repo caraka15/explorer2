@@ -1,0 +1,29 @@
+{
+    "chain_name": "stable",
+    "api": [
+        {
+            "address": "https://stable-api.crxanode.me",
+            "provider": "crxanode"
+        }
+    ],
+    "rpc": [
+        {
+            "address": "https://stable-rpc.crxanode.me",
+            "provider": "crxanode"
+        }
+    ],
+    "sdk_version": "0.53.4-stable-1",
+    "coin_type": "118",
+    "min_tx_fee": "0agusdt",
+    "addr_prefix": "stable",
+    "logo": "/logos/stable.png",
+    "assets": [
+        {
+            "base": "astable",
+            "symbol": "STABLE",
+            "exponent": "18",
+            "coingecko_id": "",
+            "logo": "/logos/stable.png"
+        }
+    ]
+}
