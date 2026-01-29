@@ -7,7 +7,7 @@
         },
         {
             "provider": "Crxanode",
-            "address": "https://paxi-api.crxanode.me"
+            "address": "https://paxi-api.crxanode.com"
         }
     ],
     "rpc": [

@@ -5,8 +5,8 @@ import { computed } from 'vue';
 
 const dashboard = useDashboard();
 
-const mainnetDomain = 'explorer.crxanode.me';
-const testnetDomain = 'testnet-explorer.crxanode.me';
+const mainnetDomain = 'explorer.crxanode.com';
+const testnetDomain = 'testnet-explorer.crxanode.com';
 
 const isTestnet = computed(() => dashboard.networkType === NetworkType.Testnet);
 

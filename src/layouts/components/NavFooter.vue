@@ -5,7 +5,7 @@
       &copy;&nbsp;
       {{ new Date().getFullYear() }}&nbsp; made by&nbsp;
       <a class="link link-primary no-underline" href="https://ping.pub" target="_blank" rel="noopener noreferrer">ping.pub</a>, modified by&nbsp;
-      <a class="link link-primary no-underline" href="https://crxanode.me" target="_blank" rel="noopener noreferrer">crxanode</a>
+      <a class="link link-primary no-underline" href="https://crxanode.com" target="_blank" rel="noopener noreferrer">crxanode</a>
     </div>
     <div class="hidden md:!block">
       <a

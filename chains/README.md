@@ -4,11 +4,11 @@ Note: the host name used in the user's browser (displayed in the address bar) to
 If the host name contains the substring "testnet" (for example: "https://mytestnetwork.example.com") then chain configuration files in the `testnet` directory (only) are loaded. Conversely if the host name does not contain that substring then chain configuration files in the `mainnet` directory (only) are loaded.
 Remember to bear this behavior in mind when selecting a DNS host name for self hosting the explorer.
 
-** if you want to list your blockchain on crxanode.me, please submit your configuration on https://github.com/crxanode/explorer.git **
+** if you want to list your blockchain on crxanode.com, please submit your configuration on https://github.com/crxanode/explorer.git **
 
 - Submit configs for mainnet, go to https://github.com/crxanode/explorer/tree/master/chains/mainnet
 
-- Submit configs for testnet, go to https://github.com/crxanode/explorer/tree/master/chains/testnet, these configs will be enabled when you visit the domain that starts with `testnet.*`, for example `https://testnet.crxanode.me`
+- Submit configs for testnet, go to https://github.com/crxanode/explorer/tree/master/chains/testnet, these configs will be enabled when you visit the domain that starts with `testnet.*`, for example `https://testnet.crxanode.com`
 
 # Sample of Config
 
@@ -17,13 +17,13 @@ Remember to bear this behavior in mind when selecting a DNS host name for self h
     "chain_name": "cosmos",
     "api": [
         {
-            "address": "https://cosmos.api.crxanode.me",
+            "address": "https://cosmos.api.crxanode.com",
             "provider": "crxanode"
         }
     ], 
     "rpc": [
         {
-            "address": "https://cosmos.api.crxanode.me",
+            "address": "https://cosmos.api.crxanode.com",
             "provider": "crxanode"
         }
     ],
@@ -42,7 +42,7 @@ Remember to bear this behavior in mind when selecting a DNS host name for self h
     "logo": "https://dl.airtable.com/.attachments/e54f814bba8c0f9af8a3056020210de0/2d1155fb/cosmos-hub.svg"
 }
 ```
-- **chain_name** the name to identify the chain on crxanode.me, would be better to use the same one as registry
+- **chain_name** the name to identify the chain on crxanode.com, would be better to use the same one as registry
 - **api** the rest api endpoint.(make sure that CORS is enabled: `Allow-Control-Allow-Origin: *`)
 - **rpc** the rpc endpoint, make sure that the port is added. rpc endpoint is only used for state sync. it's optional.
 - **assets** Native Assets on blockchain. 

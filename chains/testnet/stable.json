@@ -2,13 +2,13 @@
     "chain_name": "stable",
     "api": [
         {
-            "address": "https://stable-api.crxanode.me",
+            "address": "https://stable-api.crxanode.com",
             "provider": "crxanode"
         }
     ],
     "rpc": [
         {
-            "address": "https://stable-rpc.crxanode.me",
+            "address": "https://stable-rpc.crxanode.com",
             "provider": "crxanode"
         }
     ],
