@@ -1,0 +1,37 @@
+{
+    "chain_name": "safrochain",
+    "api": [
+        {
+            "address": "https://api.safrochain.network",
+            "provider": "Safrochain"
+        },
+        {
+            "address": "https://safrochain-api.crxanode.com",
+            "provider": "crxanode"
+        }
+    ],
+    "rpc": [
+        {
+            "address": "https://rpc.safrochain.network",
+            "provider": "Safrochain"
+        },
+        {
+            "address": "https://safrochain-rpc.crxanode.com",
+            "provider": "crxanode"
+        }
+    ],
+    "sdk_version": "0.38.19",
+    "coin_type": "118",
+    "min_tx_fee": "10000",
+    "addr_prefix": "addr_safro",
+    "logo": "/logos/safrochain.jpg",
+    "assets": [
+        {
+            "base": "usaf",
+            "symbol": "SAF",
+            "exponent": "6",
+            "coingecko_id": "safro",
+            "logo": "/logos/safrochain.jpg"
+        }
+    ]
+}
